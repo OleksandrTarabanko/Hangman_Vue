@@ -9,7 +9,7 @@ export default {
 
 <template>
     <div>
-        <span v-for="letter in currentState" :key="letter">{{ letter }}</span>
+        <span v-for="(letter, index) in currentState" :key="index">{{ letter }}</span>
     </div>
 </template>
 

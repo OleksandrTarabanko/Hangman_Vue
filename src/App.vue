@@ -4,6 +4,7 @@ import LettersToGuess from './components/LettersToGuess.vue';
 import WrongLetters from './components/WrongLetters.vue';
 import Keyboard from './components/Keyboard.vue';
 import HangmanImage from './components/HangmanImage.vue';
+import Modal from './components/Modal.vue';
 
 export default {
   components: {
@@ -12,24 +13,23 @@ export default {
     WrongLetters,
     Keyboard,
     HangmanImage,
+    Modal,
   },
 
+  // TODO make all mounted properties in data
   data() {
     return {
       livesCount: 8,
       wordToGuess: null,
       wordToGuessLetters: null,
-      wrongLetters: ["q", "w", "e"],
+      wrongLetters: [],
       currentState: [],
-      keyboardWhiteList: "abcdefghijklmnopqrstuvwxyz",
+      keyboardWhiteList: "abcdefghijklmnopqrstuvwxyz'-",
+      guessed: false
     }
   },
 
   methods: {
-    async startGame() {
-      await this.resetValues()
-    },
-
     async randomWord() {
       const request = "https://random-words-api.kushcreates.com/api?language=en&category=countries&type=lowercase&words=1";
 
@@ -42,49 +42,97 @@ export default {
       }
     },
 
-    async resetValues() {
+    handleButtonKey(key) {
+      const letter = key.keyPressed.toLowerCase()
+      if (this.livesCount > 0) {
+        if (this.wordToGuessLetters.includes(letter)) {
+          for (const index in this.wordToGuessLetters) {
+            if (this.wordToGuessLetters[index] === letter) {
+              this.currentState[index] = letter.toUpperCase()
+            }
+          }
+
+          if (!this.currentState.includes("___")) {
+            this.guessed = true
+            document.onkeydown = null
+          }
+
+          return;
+        }
+        if (!this.wrongLetters.includes(letter)) {
+          this.wrongLetters.push(letter)
+          this.livesCount -= 1
+        }
+      } else {
+        document.onkeydown = null
+      }
+    },
+
+    handleKeyboardKey(key) {
+      const letter = key
+      if (this.livesCount > 0) {
+        if (this.wordToGuessLetters.includes(letter)) {
+          for (const index in this.wordToGuessLetters) {
+            if (this.wordToGuessLetters[index] === letter) {
+              this.currentState[index] = letter.toUpperCase()
+            }
+          }
+
+          if (!this.currentState.includes("___")) {
+            this.guessed = true
+            document.onkeydown = null
+          }
+
+          return;
+        }
+        if (!this.wrongLetters.includes(letter)) {
+          this.wrongLetters.push(letter)
+          this.livesCount -= 1
+        }
+      } else {
+        document.onkeydown = null
+      }
+    },
+
+    async restart() {
       this.livesCount = 8;
-      this.wordToGuess = await randomWord();
-      this.wordToGuessLetters = wordToGuess.split("");
+      this.wordToGuess = await this.randomWord();
+      this.wordToGuessLetters = this.wordToGuess.split("");
       this.wrongLetters = [];
-      // TODO: CHECK IF I CAN DELETE this.currentState = []
-      this.currentState = [];
       this.currentState = this.wordToGuessLetters.map((letter) =>
         letter === " " ? " " : "___"
       );
-    },
-
-    handleKey(key) {
-      if (this.livesCount > 0) {
-        if (this.wordToGuessLetters.includes(key)) {
-          for (const index in this.wordToGuessLetters) {
-            if (this.wordToGuessLetters[index] === key) {
-              this.currentState[index] = key
-            }
-          }
+      this.guessed = false
+      document.onkeydown = (e) => {
+        if (this.keyboardWhiteList.includes(e.key)) {
+          this.handleKeyboardKey(e.key)
         }
       }
-    }
+    },
   },
 
   async mounted() {
     this.wordToGuess = await this.randomWord()
     this.wordToGuessLetters = this.wordToGuess.split("")
     this.currentState = this.wordToGuessLetters.map(letter => letter === " " ? " " : "___")
+    document.onkeydown = (e) => {
+      if (this.keyboardWhiteList.includes(e.key)) {
+        this.handleKeyboardKey(e.key)
+      }
+    }
   }
 }
 
 </script>
 
 <template>
-  {{ console.log(wordToGuessLetters) }}
-  {{ console.log(currentState) }}
 
   <Hearts :hearts="livesCount" />
-  <LettersToGuess :wordToGuessLetters="wordToGuessLetters" :currentState="currentState"></LettersToGuess>
+  <LettersToGuess :currentState="currentState"></LettersToGuess>
   <WrongLetters :wrongLettersList="wrongLetters" />
-  <Keyboard @handleKey(keyButton)="handleKey(key)" :keyboardWhiteList="keyboardWhiteList" />
+  <Keyboard @handleKey="handleButtonKey" :keyboardWhiteList="keyboardWhiteList" />
   <HangmanImage :hearts="livesCount" />
+  <Modal :hearts="livesCount" :wordToGuess="wordToGuess" :guessed="guessed" @restart="restart" />
 
 </template>
 

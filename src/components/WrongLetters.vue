@@ -22,6 +22,10 @@ export default {
 </template>
 
 <style scoped>
+div {
+    margin: 20px auto 0 auto;
+}
+
 span {
     margin: 10px;
 }
