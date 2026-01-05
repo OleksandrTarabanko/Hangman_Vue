@@ -28,5 +28,7 @@ div {
 
 span {
     margin: 10px;
+    padding: 5px;
+    border: 1.5px solid black;
 }
 </style>

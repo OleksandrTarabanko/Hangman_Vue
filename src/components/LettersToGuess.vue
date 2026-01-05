@@ -14,7 +14,12 @@ export default {
 </template>
 
 <style scoped>
+div {
+    margin: 20px
+}
+
 span {
     margin: 10px;
+    font-size: 28px;
 }
 </style>

@@ -16,7 +16,6 @@ export default {
     Modal,
   },
 
-  // TODO make all mounted properties in data
   data() {
     return {
       livesCount: 8,
@@ -128,11 +127,11 @@ export default {
 <template>
 
   <Hearts :hearts="livesCount" />
-  <LettersToGuess :currentState="currentState"></LettersToGuess>
+  <LettersToGuess :currentState="currentState" />
   <WrongLetters :wrongLettersList="wrongLetters" />
   <Keyboard @handleKey="handleButtonKey" :keyboardWhiteList="keyboardWhiteList" />
   <HangmanImage :hearts="livesCount" />
-  <Modal :hearts="livesCount" :wordToGuess="wordToGuess" :guessed="guessed" @restart="restart" />
+  <Modal :guessed="guessed" :hearts="livesCount" :wordToGuess="wordToGuess" @restart="restart" />
 
 </template>
 

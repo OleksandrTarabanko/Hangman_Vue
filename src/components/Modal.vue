@@ -3,9 +3,9 @@ export default {
     name: "Modal",
     emits: ['restart'],
     props: {
+        guessed: Boolean,
         hearts: Number,
         wordToGuess: String,
-        guessed: Boolean,
     }
 }
 </script>
@@ -59,7 +59,7 @@ export default {
                     </path>
                 </svg>
             </div>
-            <h2>You're lost</h2>
+            <h2>You lost</h2>
             <h3>Answer: {{ wordToGuess.toUpperCase() }}</h3>
             <h3>Start again?</h3>
             <button @click="$emit('restart')">

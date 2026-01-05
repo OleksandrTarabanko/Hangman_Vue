@@ -36,5 +36,3 @@ export default {
     <span v-for="heart in hearts" v-html="heartIcon" :key="heart"></span>
   </div>
 </template>
-
-<style scoped></style>
