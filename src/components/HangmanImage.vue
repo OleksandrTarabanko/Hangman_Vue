@@ -8,7 +8,7 @@ export default {
 </script>
 
 <template>
-    <img :src="`/Hangman_Vue/images/${8 - hearts}.png`">
+    <img :src="`./images/${8 - hearts}.png`">
 </template>
 
 <style scoped>
